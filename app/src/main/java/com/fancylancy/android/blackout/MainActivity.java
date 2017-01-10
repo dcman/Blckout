@@ -1,19 +1,27 @@
 package com.fancylancy.android.blackout;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.sip.SipAudioCall;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class MainActivity extends AppCompatActivity {
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -32,6 +40,26 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
+    /**
+     * Touch listener to use for in-layout UI controls to delay hiding the
+     * system UI. This is to prevent the jarring behavior of controls going away
+     * while interacting with activity UI.
+     */
+    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            }
+            if (view.getId() == R.id.play_button){
+                payPause(view);
+            }
+            if (view.getId() == R.id.next_button){
+                nextTrack(view);
+            }
+            return false;
+        }
+    };
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -65,30 +93,9 @@ public class MainActivity extends AppCompatActivity {
             hide();
         }
     };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            if (view.getId() == R.id.play_button){
-                Button button = (Button) view;
-                button.setText("Pressed");
-            }
-            if (view.getId() == R.id.next_button){
-                Button button = (Button) view;
-                button.setText("Pressed");
-            }
-            return false;
-        }
-    };
 
-    @Override
+    private AudioManager mAudioManager;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //hide action bar
@@ -97,10 +104,11 @@ public class MainActivity extends AppCompatActivity {
             actionBar.hide();
         }
         setContentView(R.layout.activity_main);
-
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.clock);
+        mAudioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -116,6 +124,53 @@ public class MainActivity extends AppCompatActivity {
         // while interacting with the UI.
         findViewById(R.id.play_button).setOnTouchListener(mDelayHideTouchListener);
         findViewById(R.id.next_button).setOnTouchListener(mDelayHideTouchListener);
+        setUpPlayButton();
+
+    }
+
+    private void setUpPlayButton() {
+        Button button = (Button) findViewById(R.id.play_button);
+        if (mAudioManager.isMusicActive()){
+            button.setText(getString(R.string.pause_button));
+        } else {
+            button.setText(getString(R.string.play_button));
+        }
+    }
+
+    private void nextTrack(View view) {
+        Intent i = new Intent(Intent.ACTION_MEDIA_BUTTON);
+        synchronized (this) {
+            i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT));
+            sendOrderedBroadcast(i, null);
+
+            i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT));
+            sendOrderedBroadcast(i, null);
+        }
+    }
+
+// ToDo clean up this section
+    private void payPause(View view) {
+        Button button = (Button) view;
+        Intent i = new Intent(Intent.ACTION_MEDIA_BUTTON);
+        if(mAudioManager.isMusicActive()) {
+            button.setText(getString(R.string.play_button));
+            synchronized (this) {
+                i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE));
+                sendOrderedBroadcast(i, null);
+
+                i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PAUSE));
+                sendOrderedBroadcast(i, null);
+            }
+        }else {
+            button.setText(getString(R.string.pause_button));
+            synchronized (this) {
+                i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY));
+                sendOrderedBroadcast(i, null);
+
+                i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY));
+                sendOrderedBroadcast(i, null);
+            }
+        }
 
     }
 
@@ -168,4 +223,5 @@ public class MainActivity extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
 }
