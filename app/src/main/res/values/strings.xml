@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">BlackOut</string>
 
-    <string name="dummy_button">Dummy Button</string>
+    <string name="play_button">Play</string>
+    <string name="next_button">Next</string>
+
     <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

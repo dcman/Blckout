@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -79,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
             if (AUTO_HIDE) {
                 delayedHide(AUTO_HIDE_DELAY_MILLIS);
             }
+            if (view.getId() == R.id.play_button){
+                Button button = (Button) view;
+                button.setText("Pressed");
+            }
+            if (view.getId() == R.id.next_button){
+                Button button = (Button) view;
+                button.setText("Pressed");
+            }
             return false;
         }
     };
@@ -105,7 +114,9 @@ public class MainActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.play_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.next_button).setOnTouchListener(mDelayHideTouchListener);
+
     }
 
     @Override
