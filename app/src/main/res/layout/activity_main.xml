@@ -45,7 +45,14 @@
                 android:layout_weight="1"
                 android:text="@string/play_button"
                 android:onClick="payPause"/>
-
+            <Button
+                android:id="@+id/back_button"
+                style="?metaButtonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/back_button"
+                android:onClick="backTrack"/>
             <Button
                 android:id="@+id/next_button"
                 style="?metaButtonBarButtonStyle"

@@ -3,5 +3,7 @@
 
     <string name="play_button">Play</string>
     <string name="next_button">Next</string>
+    <string name="back_button">Back</string>
     <string name="pause_button">Pause</string>
+
 </resources>
