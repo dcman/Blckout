@@ -34,7 +34,8 @@
             android:layout_gravity="bottom|center_horizontal"
             android:background="@color/black_overlay"
             android:orientation="horizontal"
-            tools:ignore="UselessParent">
+            tools:ignore="UselessParent"
+            android:paddingBottom="15dp">
 
             <Button
                 android:id="@+id/play_button"
@@ -42,7 +43,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/play_button" />
+                android:text="@string/play_button"
+                android:onClick="payPause"/>
 
             <Button
                 android:id="@+id/next_button"
@@ -50,7 +52,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/next_button" />
+                android:text="@string/next_button"
+                android:onClick="nextTrack"/>
 
         </LinearLayout>
     </FrameLayout>

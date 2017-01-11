@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,8 @@ import android.widget.Toast;
  * status bar and navigation/system bar) with user interaction.
  */
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = MainActivity.class.getName();
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -50,12 +53,6 @@ public class MainActivity extends AppCompatActivity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (AUTO_HIDE) {
                 delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            if (view.getId() == R.id.play_button){
-                payPause(view);
-            }
-            if (view.getId() == R.id.next_button){
-                nextTrack(view);
             }
             return false;
         }
@@ -122,8 +119,6 @@ public class MainActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.play_button).setOnTouchListener(mDelayHideTouchListener);
-        findViewById(R.id.next_button).setOnTouchListener(mDelayHideTouchListener);
         setUpPlayButton();
 
     }
@@ -137,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void nextTrack(View view) {
+    public void nextTrack(View view) {
+        Log.i(TAG, "nextTrack: Clicked");
         Intent i = new Intent(Intent.ACTION_MEDIA_BUTTON);
         synchronized (this) {
             i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT));
@@ -149,7 +145,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 // ToDo clean up this section
-    private void payPause(View view) {
+    public void payPause(View view) {
+        Log.i(TAG, "payPause: Clicked");
         Button button = (Button) view;
         Intent i = new Intent(Intent.ACTION_MEDIA_BUTTON);
         if(mAudioManager.isMusicActive()) {
