@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.clock);
+        mContentView = findViewById(R.id.frame_layout);
         mAudioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
 
 
@@ -116,14 +116,15 @@ public class MainActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
+        setUpPlayButton();
     }
 
     private void setUpPlayButton() {
-        Button button = (Button) findViewById(R.id.play_button);
+        ImageButton button = (ImageButton) findViewById(R.id.play_button);
         if (mAudioManager.isMusicActive()){
-            button.setText(getString(R.string.pause_button));
+            button.setImageResource(R.drawable.ic_pause_200px);
         } else {
-            button.setText(getString(R.string.play_button));
+            button.setImageResource(R.drawable.ic_play_arrow_200px);
         }
     }
 
@@ -142,10 +143,10 @@ public class MainActivity extends AppCompatActivity {
 // ToDo clean up this section
     public void payPause(View view) {
         Log.i(TAG, "payPause: Clicked");
-        Button button = (Button) view;
+        ImageButton button = (ImageButton) view;
         Intent i = new Intent(Intent.ACTION_MEDIA_BUTTON);
         if(mAudioManager.isMusicActive()) {
-            button.setText(getString(R.string.play_button));
+            button.setImageResource(R.drawable.ic_play_arrow_200px);
             synchronized (this) {
                 i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE));
                 sendOrderedBroadcast(i, null);
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 sendOrderedBroadcast(i, null);
             }
         }else {
-            button.setText(getString(R.string.pause_button));
+            button.setImageResource(R.drawable.ic_pause_200px);
             synchronized (this) {
                 i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY));
                 sendOrderedBroadcast(i, null);
